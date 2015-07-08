@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<!--
+    Copyright (c) 2012-2014 Adobe Systems Incorporated. All rights reserved.
+
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <title>Hello World</title>
+        <script type="text/javascript">
+                function test(){
+                    console.log("yay");
+                }
+                var pictureSource;   // picture source
+                var destinationType; // sets the format of returned value
+                document.addEventListener("deviceready", onDeviceReady, false);
+                function onDeviceReady(){
+                    pictureSource=navigator.camera.PictureSourceType;
+                    destinationType=navigator.camera.DestinationType;
+                    console.log(navigator.camera);
+                }
+                // Called when a photo is successfully retrieved
+                var pictureCount;
+                function onPhotoURISuccess(imageURI) {
+                  // Uncomment to view the image file URI
+                  /*
+                  console.log(imageURI);
+                  if(localStorage.getItem('pCount')!=null){
+                    pCount = localStorage.getItem('pCount');
+                  }
+                  else{
+                    pCount = 0;
+                  }
+                  */
+                  // Get image handle
+                  //
+                  var pCount=localStorage.getItem('pictureCount');
+                  if(pCount==1){
+                    var largeImage = document.getElementById('largeImage');
+                    largeImage.style.display = 'block';
+                    largeImage.src = imageURI;
+                  }
+                  else if(pCount==2){
+                     var largeImage2 = document.getElementById('largeImage2');
+                      largeImage2.style.display = 'block';
+                      largeImage2.src = imageURI;
+                  }
+                  else if(pCount==3){
+                     var largeImage3 = document.getElementById('largeImage3');
+                      largeImage3.style.display = 'block';
+                      largeImage3.src = imageURI;
+                  }
+
+                    movePic(imageURI);
+                    console.log("gets");
+                }
+
+                // A button will call this function
+                //
+                function capturePhoto(pNum){
+                  if(pNum==1){
+                    pictureCount=1;
+                    localStorage.setItem('pictureCount', pictureCount);
+                  }
+                  else if(pNum==2){
+                    pictureCount=2;
+                    localStorage.setItem('pictureCount', pictureCount);
+                  }
+                  else if(pNum==3){
+                    pictureCount=3;
+                    localStorage.setItem('pictureCount', pictureCount);
+                  }
+                  navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
+                    destinationType: Camera.DestinationType.FILE_URI});
+                }
+
+                // A button will call this function
+                //
+                function capturePhotoEdit() {
+                  // Take picture using device camera, allow edit, and retrieve image as base64-encoded string
+                  navigator.camera.getPicture(onPhotoDataSuccess, onFail, { quality: 20, allowEdit: true,
+                    destinationType: destinationType.DATA_URL });
+                }
+
+                // A button will call this function
+                //
+                function getPhoto(source) {
+                  // Retrieve image file location from specified source
+                  navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
+                    destinationType: destinationType.FILE_URI,
+                    sourceType: source });
+                }
+                window.onload = function(){
+                  console.log("ya");
+                  var x = localStorage.getItem('imagepath1');
+                  var x2 = localStorage.getItem('imagepath2');
+                  var x3 = localStorage.getItem('imagepath3');
+                  var largeImage = document.getElementById("largeImage");
+                  largeImage.src = x; 
+                  largeImage.style.display = 'block';
+                  var largeImage2 = document.getElementById("largeImage2");
+                  largeImage2.src = x2; 
+                  largeImage2.style.display = 'block';
+                  console.log(largeImage2.src);
+                  var largeImage3 = document.getElementById("largeImage3");
+                  largeImage3.src = x3; 
+                  largeImage3.style.display = 'block';
+                  console.log(largeImage3.src);
+                }
+                function clearStorage(){
+                  localStorage.clear();
+                  ClearDirectory();
+                  var largeImage = document.getElementById("largeImage");
+                  largeImage.src = "";
+                } 
+                function movePic(file){ 
+                    window.resolveLocalFileSystemURL(file, resolveOnSuccess, resOnError); 
+                } 
+                function resolveOnSuccess(entry){ 
+                  var d = new Date();
+                  var n = d.getTime();
+                  //new file name
+                  var newFileName = n + ".jpg";
+                  var myFolderApp = "MyAppFolder";
+
+                  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fileSys) {      
+                  //The folder is created if doesn't exist
+                  fileSys.root.getDirectory( myFolderApp,
+                                  {create:true, exclusive: false},
+                                  function(directory) {
+                                      entry.moveTo(directory, newFileName,  successMove, resOnError);
+                                  },
+                                  resOnError);
+                                  },
+                  resOnError);
+              }
+
+              //Callback function when the file has been moved successfully - inserting the complete path
+              //var entryReader; 
+              var pics = new array(5);
+              function successMove(entry) {
+                  //Store imagepath in session for future use
+                  // like to store it in database
+                  var picCount=localStorage.getItem('pictureCount');
+                  if(picCount==1){
+                    console.log("first");
+                    localStorage.setItem('imagepath1', entry.toURL());
+                    console.log("entry.toURL()" + entry.toURL());
+                    console.log("entry.fullPath" + entry.fullPath);
+                  }
+                  else if(picCount==2){
+                    console.log("second");
+                    localStorage.setItem('imagepath2', entry.toURL());
+                    console.log("entry.toURL()" + entry.toURL());
+                    console.log("entry.fullPath" + entry.fullPath);
+                  }
+                  else if(picCount==3){
+                    console.log("second");
+                    localStorage.setItem('imagepath3', entry.toURL());
+                    console.log("entry.toURL()" + entry.toURL());
+                    console.log("entry.fullPath" + entry.fullPath);
+                  }
+              }
+              // Get a directory reader
+              //var dirEntry = new DirectoryEntry(MyAppFolder, 'file:///var/mobile/Containers/Data/Application/E6BF8F6A-405D-4BEF-B556-CA1D46E4436A/Documents/MyAppFolder');
+              // Get a list of all the entries in the directory
+              function viewData(){
+                    //shows all the key / value pairs
+                    for (i = 0; i < localStorage.length; i++){
+                        key = localStorage.key(i);
+                        value = localStorage.getItem(key);
+                        console.log(key + ": " + value);
+                    }
+                    /*
+                    if(localStorage.getItem('pics')!=null){
+                      var pic = localStorage.getItem('pics');
+                      for(i = 0; i<pics.length; i++){
+                        console log("pics["+i+"]"+pic[i]);
+                      }
+                    }
+                    */ 
+                    // Get a list of all the entries in the directory
+                    /*
+                    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs) {
+                    console.log("Root = " + fs.root.fullPath);
+                    var directoryReader = fs.root.createReader();
+                    directoryReader.readEntries(function(entries) {
+                    var i;
+                    for (i=0; i<entries.length; i++) {
+                    console.log(entries[i].name);
+                    }
+                    }, function (error) {
+                    alert(error.code);
+                    })
+                    }, function (error) {
+                    alert(error.code);
+                    });
+                */
+                    //window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onFileSuccess, onFail);
+                }
+                /*
+                function onFileSuccess(fileSystem) {
+                    fileSystem.root.getDirectory("MyAppFolder", {create: false, exclusive: false}, getDirSuccess, onFail);
+                }
+                function getDirSuccess(dirEntry) {
+                    // Get a directory reader
+                    var directoryReader = dirEntry.createReader();
+
+                    // Get a list of all the entries in the directory
+                    directoryReader.readEntries(readerSuccess, onFail);
+                }
+                function readerSuccess(entries) {
+                    var i;
+                    for (i=0; i<entries.length; i++) {
+                      console.log(entries[i].name);
+                    }
+                }
+                */
+                function ClearDirectory() {
+                  window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, onFileSystemSuccess, fail);
+                  function fail(evt) {
+                      alert("FILE SYSTEM FAILURE" + evt.target.error.code);
+                  }
+                  function onFileSystemSuccess(fileSystem) {
+                      fileSystem.root.getDirectory(
+                           "MyAppFolder",
+                          {create : true, exclusive : false},
+                          function(entry) {
+                          entry.removeRecursively(function() {
+                              console.log("Remove Recursively Succeeded");
+                          }, fail);
+                      }, fail);
+                  }
+              }
+              function resOnError(error) {
+                  alert(error.code);
+              }
+              function onFail(message) {
+                alert('Failed because: ' + message);
+              }
+                cordova.plugins.email.isAvailable(
+                function (isAvailable) {
+                        // alert('Service is not available') unless isAvailable;
+                    }
+                );
+                cordova.plugins.email.open({
+                    to:      'aditocco@ufl.edu',
+                    cc:      'datocco13@gmail.com',
+                    bcc:     'datocco13@gmail.com',
+                    subject: 'Greetings',
+                    body:    'Worked!'
+                });
+                function email(){
+                    console.log('gets');
+                    open();
+                    console.log('getsHere');
+                }
+        </script>
+    </head>
+    <body>
+        <div class="app">
+            <h1>PhoneGap</h1>
+            <div id="deviceready" class="blink">
+                <p class="event listening">Connecting to Device</p>
+                <p class="event received">Device is Ready</p>
+            </div>
+        </div>
+        <button class="test" onclick="email();"> email </button>
+        <button onclick="capturePhoto(1);">Capture Photo1</button> <br>
+        <button onclick="capturePhoto(2);">Capture Photo2</button> <br>
+        <button onclick="capturePhoto(3);">Capture Photo3</button> <br>
+        <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+        <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
+        <button onclick="clearStorage();">Clear</button><br>
+        <button onclick="viewData();">View</button><br>
+        <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+        <img style="display:none;width:70px;height:70px;" id="largeImage" src="" />
+        <img style="display:none;width:70px;height:70px;" id="largeImage2" src="" />
+        <img style="display:none;width:70px;height:70px;" id="largeImage3" src="" />
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript">
+            app.initialize();
+        </script>
+    </body>
+    <style type="text/css">
+        .test{
+            margin-top: 50%;
+        }
+        .
+    </style>
+</html>
+
+
+
+
