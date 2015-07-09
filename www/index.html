@@ -105,7 +105,7 @@
 
                 // A button will call this function
                 //
-                function getPhoto(source) {
+                function getPhoto(source, pNum) {
                   // Retrieve image file location from specified source
                   navigator.camera.getPicture(onPhotoURISuccess, onFail, { quality: 50,
                     destinationType: destinationType.FILE_URI,
@@ -158,7 +158,6 @@
 
               //Callback function when the file has been moved successfully - inserting the complete path
               //var entryReader; 
-              var pics = new array(5);
               function successMove(entry) {
                   //Store imagepath in session for future use
                   // like to store it in database
@@ -259,6 +258,25 @@
               function onFail(message) {
                 alert('Failed because: ' + message);
               }
+              function openImage(){
+                /*
+                var path = localStorage.getItem('imagepath1');
+                console.log(path);
+                window.open('path', '_system', ' ');
+                console.log('get');
+                */
+                var image1 = document.getElementById('largeImage');
+                if(image1.style.height!='75vh'){
+                  image1.style.height = '75vh';
+                  image1.style.width = '75vw';
+
+                }
+                else{
+                  image1.style.height = '70px';
+                  image1.style.width = '70px';
+                }
+                console.log('here');
+              }
                 cordova.plugins.email.isAvailable(
                 function (isAvailable) {
                         // alert('Service is not available') unless isAvailable;
@@ -287,15 +305,20 @@
             </div>
         </div>
         <button class="test" onclick="email();"> email </button>
-        <button onclick="capturePhoto(1);">Capture Photo1</button> <br>
+        <!--<button onclick="capturePhoto(1);">Capture Photo1</button> <br>!-->
+        <a href="#" onclick="capturePhoto(1);"><br>
+        <img id="icon" style="display:non;width:40px;height:40px;"src="camera.png">
+        </a>
         <button onclick="capturePhoto(2);">Capture Photo2</button> <br>
         <button onclick="capturePhoto(3);">Capture Photo3</button> <br>
-        <button onclick="getPhoto(pictureSource.PHOTOLIBRARY);">From Photo Library</button><br>
+        <button onclick="getPhoto(pictureSource.PHOTOLIBRARY, 1);">From Photo Library</button><br>
         <button onclick="getPhoto(pictureSource.SAVEDPHOTOALBUM);">From Photo Album</button><br>
         <button onclick="clearStorage();">Clear</button><br>
         <button onclick="viewData();">View</button><br>
         <img style="display:none;width:60px;height:60px;" id="smallImage" src="" />
+        <a href="#" onclick="openImage();">
         <img style="display:none;width:70px;height:70px;" id="largeImage" src="" />
+        </a>
         <img style="display:none;width:70px;height:70px;" id="largeImage2" src="" />
         <img style="display:none;width:70px;height:70px;" id="largeImage3" src="" />
         <script type="text/javascript" src="cordova.js"></script>
